@@ -10,22 +10,15 @@ from utility.video.background_video_generator import generate_video_url
 from utility.render.render_engine import get_output_media
 from utility.video.video_search_query_generator import getVideoSearchQueriesTimed, merge_empty_intervals
 import argparse
-from google.colab import files
-import io
 
 if __name__ == "__main__":
-    print("Enter story language (en/hi)")
-    LANGUAGE = input();
+    parser = argparse.ArgumentParser(description="Generate a video from a topic.")
+    parser.add_argument("language", type=str, help="Language of the topic Ex: en/hi")
+    parser.add_argument("scriptText", type=str, help="The topic for the video")
 
-    print("Please select a file to upload...")
-    uploaded = files.upload()
-        
-    # Process the uploaded file
-    for filename, content in uploaded.items():
-        print(f"\nReading file: {filename}")        
-        # Convert bytes to string and read content
-        scriptText = io.StringIO(content.decode('utf-8')).read()
-        print(scriptText)
+    args = parser.parse_args()
+    scriptText = args.scriptText
+    LANGUAGE = args.language
 
     SAMPLE_FILE_NAME = "audio_tts.wav"
     VIDEO_SERVER = "pexel"
