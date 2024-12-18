@@ -13,7 +13,7 @@ import argparse
 
 if __name__ == "__main__":
     print("Enter story script")
-    scriptText = input()
+    scriptText = input().encode('utf-8').decode('utf-8')
     print("Enter story language (en/hi)")
     LANGUAGE = input();
 
