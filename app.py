@@ -12,13 +12,19 @@ from utility.video.video_search_query_generator import getVideoSearchQueriesTime
 import argparse
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate a video from a topic.")
+    # parser = argparse.ArgumentParser(description="Generate a video from a topic.")
     # parser.add_argument("language", type=str, help="Language of the topic Ex: en/hi")
-    parser.add_argument("scriptText", type=str, help="The topic for the video")
+    # parser.add_argument("scriptText", type=str, help="The topic for the video")
 
-    args = parser.parse_args()
-    script = args.scriptText
+    # args = parser.parse_args()
+    # script = args.scriptText
     # LANGUAGE = args.language
+
+    file = open("text-file.txt", "r+")
+
+    print("Output of Read function is ")
+    script = file.read()
+    file.close()
 
     SAMPLE_FILE_NAME = "audio_tts.wav"
     VIDEO_SERVER = "pexel"
