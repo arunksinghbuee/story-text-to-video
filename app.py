@@ -20,11 +20,21 @@ if __name__ == "__main__":
     # script = args.scriptText
     # LANGUAGE = args.language
 
-    file = open("text-file.txt", "r+")
-
-    print("Output of Read function is ")
+    file = open("text-file.txt", "r+", encoding='utf-8')
     script = file.read()
     file.close()
+
+    # Clean Hindi text
+    def clean_hindi_text(text):
+        # Remove special characters but keep Hindi characters and basic punctuation
+        import re
+        # Keep Hindi characters (0900-097F), numbers, basic punctuation
+        cleaned = re.sub(r'[^।-॥\u0900-\u097F\s.,!?0-9]', '', text)
+        # Remove extra whitespace
+        cleaned = ' '.join(cleaned.split())
+        return cleaned
+
+    script = clean_hindi_text(script)
 
     SAMPLE_FILE_NAME = "audio_tts.wav"
     VIDEO_SERVER = "pexel"
