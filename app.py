@@ -13,23 +13,25 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a video from a topic.")
-    parser.add_argument("language", type=str, help="Language of the topic Ex: en/hi")
+    # parser.add_argument("language", type=str, help="Language of the topic Ex: en/hi")
     parser.add_argument("scriptText", type=str, help="The topic for the video")
 
     args = parser.parse_args()
-    scriptText = args.scriptText
-    LANGUAGE = args.language
+    script = args.scriptText
+    # LANGUAGE = args.language
 
     SAMPLE_FILE_NAME = "audio_tts.wav"
     VIDEO_SERVER = "pexel"
 
-    print("script: {}".format(scriptText))
+    print("script: {}".format(script))
 
-    if LANGUAGE == "hi":
-        voice = "hi-IN-SwaraNeural"
-    else:
-        voice = "en-AU-WilliamNeural"
-    asyncio.run(generate_audio(scriptText, SAMPLE_FILE_NAME, voice))
+    voice = "en-AU-WilliamNeural"
+
+    # if LANGUAGE == "hi":
+    #     voice = "hi-IN-SwaraNeural"
+    # else:
+    #     voice = "en-AU-WilliamNeural"
+    asyncio.run(generate_audio(script, SAMPLE_FILE_NAME, voice))
 
     # timed_captions = generate_timed_captions(SAMPLE_FILE_NAME)
     # print(timed_captions)
