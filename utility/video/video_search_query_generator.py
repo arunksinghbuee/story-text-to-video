@@ -60,7 +60,7 @@ def getVideoSearchQueriesTimed(script,captions_timed):
             except Exception as e:
                 print("content: \n", content, "\n\n")
                 print(e)
-                content = fix_json(content.replace("```json", "").replace("```", ""))
+                content = fix_json(content.replace("```json", "").replace("```", "").replace("\"s ", "'s "))
                 out = json.loads(content)
         return out
     except Exception as e:
