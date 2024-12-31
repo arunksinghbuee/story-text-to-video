@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     print("script: {}".format(script))
 
-    voice = "hi-IN-SwaraNeural"
+    voice = "en-IN-NeerjaExpressiveNeural"
 
     # if LANGUAGE == "hi":
     #     voice = "hi-IN-SwaraNeural"
