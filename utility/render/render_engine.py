@@ -9,6 +9,7 @@ from moviepy.editor import (AudioFileClip, CompositeVideoClip, CompositeAudioCli
 from moviepy.audio.fx.audio_loop import audio_loop
 from moviepy.audio.fx.audio_normalize import audio_normalize
 import requests
+from PIL import Image
 
 def download_file(url, filename):
     with open(filename, 'wb') as f:
@@ -40,16 +41,30 @@ def get_output_media(audio_file, captions, image_segments, mode="images"):
         end_time = segment['end_time']
         duration = end_time - start_time
         
-        # Create image clip
-        img_clip = ImageClip(segment['image_path'])
-        # Set duration and start time
-        img_clip = img_clip.set_duration(duration)
-        img_clip = img_clip.set_start(start_time)
-        
-        # Resize to 1920x1080 (or your preferred resolution)
-        img_clip = img_clip.resize(width=1920, height=1080)
-        
-        clips.append(img_clip)
+        try:
+            # Create image clip
+            img_clip = ImageClip(segment['image_path'])
+            # Set duration and start time
+            img_clip = img_clip.set_duration(duration)
+            img_clip = img_clip.set_start(start_time)
+            
+            # Use PIL to resize the image first
+            pil_image = Image.open(segment['image_path'])
+            pil_image = pil_image.resize((1920, 1080), Image.Resampling.LANCZOS)
+            pil_image.save(segment['image_path'])
+            
+            # Create new clip from resized image
+            img_clip = ImageClip(segment['image_path'])
+            img_clip = img_clip.set_duration(duration)
+            img_clip = img_clip.set_start(start_time)
+            
+            clips.append(img_clip)
+        except Exception as e:
+            print(f"Error processing image segment: {e}")
+            continue
+    
+    if not clips:
+        raise Exception("No valid image clips were created")
     
     # Create caption clips
     caption_clips = []
