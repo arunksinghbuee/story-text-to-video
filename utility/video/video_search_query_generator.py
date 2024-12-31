@@ -48,25 +48,33 @@ def fix_json(json_str):
     json_str = json_str.replace('"you didn"t"', '"you didn\'t"')
     return json_str
 
-def getVideoSearchQueriesTimed(script,captions_timed):
-    end = captions_timed[-1][0][1]
+def getVideoSearchQueriesTimed(script, captions_timed):
     try:
+        # Get response from OpenAI
+        response_text = call_OpenAI(script, captions_timed)
         
-        out = [[[0,0],""]]
-        while out[-1][0][1] != end:
-            content = call_OpenAI(script,captions_timed).replace("'",'"')
-            try:
-                out = json.loads(content)
-            except Exception as e:
-                print("content: \n", content, "\n\n")
-                print(e)
-                content = fix_json(content.replace("```json", "").replace("```", "").replace("\"s ", "'s "))
-                out = json.loads(content)
-        return out
+        # Clean up the response text
+        # Remove the "```json" and "```" markers
+        response_text = response_text.replace('```json', '').replace('```', '').strip()
+        
+        # Clean up any content: prefix
+        if 'content:' in response_text:
+            response_text = response_text.split('content:')[-1].strip()
+        
+        # Parse the JSON array
+        import json
+        search_terms = json.loads(response_text)
+        
+        # Convert the search terms into the expected format
+        formatted_terms = []
+        for time_range, prompts in search_terms:
+            start_time, end_time = time_range
+            formatted_terms.append([[float(start_time), float(end_time)], prompts])
+        
+        return formatted_terms
     except Exception as e:
-        print("error in response",e)
-   
-    return None
+        print(f"error in response {str(e)}")
+        return None
 
 def call_OpenAI(script,captions_timed):
     user_content = """Script: {}
