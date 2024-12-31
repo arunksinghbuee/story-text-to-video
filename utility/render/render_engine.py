@@ -69,10 +69,18 @@ def get_output_media(audio_file, captions, image_segments, mode="images"):
     # Create caption clips
     caption_clips = []
     for caption in captions:
-        text_clip = TextClip(caption['text'], fontsize=40, color='white', font='Arial')
-        text_clip = text_clip.set_position('bottom').set_duration(caption['end'] - caption['start'])
-        text_clip = text_clip.set_start(caption['start'])
-        caption_clips.append(text_clip)
+        # Unpack the tuple values
+        time_range, text = caption
+        start_time, end_time = time_range
+        
+        try:
+            text_clip = TextClip(str(text), fontsize=40, color='white', font='Arial')
+            text_clip = text_clip.set_position('bottom').set_duration(end_time - start_time)
+            text_clip = text_clip.set_start(start_time)
+            caption_clips.append(text_clip)
+        except Exception as e:
+            print(f"Error creating caption clip: {e}")
+            continue
     
     # Combine all clips
     final_clip = CompositeVideoClip(clips + caption_clips)
