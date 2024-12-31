@@ -35,16 +35,26 @@ def generate_images_for_segments(search_terms):
     image_segments = []
     temp_dir = tempfile.mkdtemp()
     
-    for i, segment in enumerate(search_terms):
-        start_time, end_time, prompt = segment
-        image_path = os.path.join(temp_dir, f"segment_{i}.jpg")
+    for segment in search_terms:
+        time_range, prompts = segment  # Unpack the correct format
+        start_time, end_time = time_range
         
-        if download_pollinations_image(prompt, image_path):
-            image_segments.append({
-                'start_time': start_time,
-                'end_time': end_time,
-                'image_path': image_path
-            })
+        # Try each prompt in the list until one works
+        image_path = os.path.join(temp_dir, f"segment_{len(image_segments)}.jpg")
+        success = False
+        
+        for prompt in prompts:
+            if download_pollinations_image(prompt, image_path):
+                image_segments.append({
+                    'start_time': start_time,
+                    'end_time': end_time,
+                    'image_path': image_path
+                })
+                success = True
+                break
+        
+        if not success:
+            print(f"Failed to generate image for segment {start_time}-{end_time}")
     
     return image_segments
 
