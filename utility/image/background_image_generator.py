@@ -1,22 +1,45 @@
 import os
 import tempfile
 import requests
+import base64
 from urllib.parse import quote
 
 def download_pollinations_image(prompt, output_path):
-    """Download image from pollinations.ai"""
-    encoded_prompt = quote(prompt)
-    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+    """Generate and download image using getimg.ai API"""
+    api_url = "https://api.getimg.ai/v1/essential-v2/text-to-image"
+    api_key = "key-4ZhUVN7MsQPinVfNPnLWRJ0ZoKaIqVupRFP7KS9lHhu6AXrc5QPs5Dqsy1qJdAJrO0xBBAVKhvhavAUAkJKNXndqVjy4UiiA"
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "prompt": prompt,
+        "response_format": "base64"  # Get base64 response for direct saving
+    }
     
     try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
+        response = requests.post(api_url, headers=headers, json=payload, timeout=30)
+        response.raise_for_status()  # Raise exception for bad status codes
+        
+        # Extract base64 image data from response
+        image_data = response.json().get('image')
+        if image_data:
+            # Decode base64 and save to file
             with open(output_path, 'wb') as f:
-                f.write(response.content)
+                f.write(base64.b64decode(image_data))
             return True
+        else:
+            print("No image data in response")
+            return False
+            
+    except requests.exceptions.RequestException as e:
+        print(f"Error generating image: {e}")
+        return False
     except Exception as e:
-        print(f"Error downloading image: {e}")
-    return False
+        print(f"Unexpected error: {e}")
+        return False
 
 def generate_images_for_segments(search_terms):
     """Generate images for each time segment"""
