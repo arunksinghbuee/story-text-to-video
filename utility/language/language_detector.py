@@ -4,7 +4,7 @@ import edge_tts
 # Map of languages to their best child-friendly female TTS voices
 VOICE_MAPPING = {
     'en': 'en-US-JennyMultilingualNeural',  # Cheerful, child-friendly English voice
-    'hi': 'hi-IN-MadhurNeural',             # Hindi voice
+    'hi': 'hi-IN-SwaraNeural',             # Hindi voice
     'es': 'es-MX-DaliaNeural',              # Spanish voice
     'fr': 'fr-FR-DeniseNeural',             # French voice
     'de': 'de-DE-KatjaNeural',              # German voice

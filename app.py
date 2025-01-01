@@ -7,7 +7,10 @@ from utility.captions.timed_captions_generator import generate_timed_captions
 from utility.video.video_search_query_generator import getVideoSearchQueriesTimed
 from utility.image.background_image_generator import generate_images_for_segments
 from utility.render.render_engine import get_output_media
-from utility.language.language_detector import detect_language_and_voice, list_available_voices
+from utility.language.language_detector import (
+    detect_language_and_voice, 
+    list_available_voices,
+)
 
 def review_search_terms(search_terms):
     """Interactive review and update of search terms"""
@@ -40,12 +43,6 @@ async def main():
 
     SAMPLE_FILE_NAME = "audio_tts.wav"
     print("script: {}".format(script))
-
-    # Check Hindi voice availability
-    hindi_voice = "hi-IN-SweetyNeural"
-    is_available = await check_voice_availability(hindi_voice)
-    if is_available:
-        print(f"Using {hindi_voice} for Hindi text")
     
     # Detect language and get appropriate voice
     lang, voice = await detect_language_and_voice(script)
