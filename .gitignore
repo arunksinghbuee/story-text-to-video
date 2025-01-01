@@ -4,3 +4,5 @@ __pycache__/
 .DS_Store
 audio_tts.wav
 get-pip.py
+test_images/test_image_1.jpg
+concerns.txt

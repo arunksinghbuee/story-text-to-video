@@ -7,7 +7,7 @@ from urllib.parse import quote
 def download_pollinations_image(prompt, output_path):
     """Generate and download image using getimg.ai API"""
     api_key = os.environ.get('GETIMP_API_KEY')
-    api_url = "https://api.getimg.ai/v1/essential-v2/text-to-image"
+    api_url = "https://api.getimg.ai/v1/stable-diffusion-xl/text-to-image"
     
     headers = {
         "authorization": f"Bearer {api_key}",
@@ -19,7 +19,8 @@ def download_pollinations_image(prompt, output_path):
         "prompt": prompt,
         "response_format": "b64",
         "style": "photorealism",
-        "aspect_ratio": "1:1",
+        "width": 1280,
+        "height": 720,
         "output_format": "jpeg",
     }
     
