@@ -7,7 +7,7 @@ from utility.captions.timed_captions_generator import generate_timed_captions
 from utility.video.video_search_query_generator import getVideoSearchQueriesTimed
 from utility.image.background_image_generator import generate_images_for_segments
 from utility.render.render_engine import get_output_media
-from utility.language.language_detector import detect_language_and_voice, list_available_voices, check_voice_availability
+from utility.language.language_detector import detect_language_and_voice, list_available_voices
 
 def review_search_terms(search_terms):
     """Interactive review and update of search terms"""
