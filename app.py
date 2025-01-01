@@ -1,16 +1,14 @@
 from openai import OpenAI
 import os
 import edge_tts
-import json
 import asyncio
 import whisper_timestamped as whisper
 import requests
 from PIL import Image
-from io import BytesIO
 import tempfile
 from utility.audio.audio_generator import generate_audio
 from utility.captions.timed_captions_generator import generate_timed_captions
-from utility.video.video_search_query_generator import getVideoSearchQueriesTimed, merge_empty_intervals
+from utility.video.video_search_query_generator import getVideoSearchQueriesTimed
 from utility.render.render_engine import get_output_media
 
 def download_pollinations_image(prompt, output_path):
