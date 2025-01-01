@@ -64,7 +64,6 @@ if __name__ == "__main__":
     file.close()
 
     SAMPLE_FILE_NAME = "audio_tts.wav"
-
     print("script: {}".format(script))
 
     # Clean Hindi text
@@ -90,13 +89,36 @@ if __name__ == "__main__":
     print("timed_captions", timed_captions)
 
     search_terms = getVideoSearchQueriesTimed(script, timed_captions)
-    print("search_terms", search_terms)
+    print("\nInitial search terms:", search_terms)
 
+    # Interactive review and update of search terms
     if search_terms is not None:
-        # Generate images instead of downloading videos
+        print("\nReview and update search terms. Enter 'done' when finished.")
+        updated_terms = []
+        
+        for i, segment in enumerate(search_terms):
+            time_range, prompts = segment
+            start_time, end_time = time_range
+            
+            print(f"\nSegment {i+1} ({start_time}-{end_time}):")
+            print(f"Current prompts: {prompts}")
+            
+            user_input = input("Enter new prompts (comma-separated) or press Enter to keep current: ")
+            
+            if user_input.strip().lower() == 'done':
+                break
+            elif user_input.strip():
+                new_prompts = [p.strip() for p in user_input.split(',')]
+                updated_terms.append([[start_time, end_time], new_prompts])
+            else:
+                updated_terms.append(segment)
+
+        search_terms = updated_terms
+        print("\nFinal search terms:", search_terms)
+
+        # Generate images with updated search terms
         image_segments = generate_images_for_segments(search_terms)
         if image_segments:
-            # Modify get_output_media to handle images instead of videos
             video = get_output_media(SAMPLE_FILE_NAME, timed_captions, image_segments, "images")
             print("Video generated successfully")
         else:
