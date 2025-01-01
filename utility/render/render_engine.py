@@ -6,10 +6,43 @@ def get_output_media(audio_file, captions, image_segments):
     try:
         # Load the audio file
         audio = AudioFileClip(audio_file)
+        total_duration = audio.duration
+        
+        # Sort segments by start time
+        image_segments = sorted(image_segments, key=lambda x: x['start_time'])
+        
+        # Fill gaps between segments
+        filled_segments = []
+        current_time = 0
+        
+        for segment in image_segments:
+            start_time = segment['start_time']
+            end_time = segment['end_time']
+            
+            # If there's a gap before this segment, fill it with the previous image
+            if start_time > current_time and filled_segments:
+                prev_segment = filled_segments[-1].copy()
+                prev_segment.update({
+                    'start_time': current_time,
+                    'end_time': start_time
+                })
+                filled_segments.append(prev_segment)
+            
+            filled_segments.append(segment)
+            current_time = max(current_time, end_time)
+        
+        # Fill gap at the end if needed
+        if current_time < total_duration and filled_segments:
+            last_segment = filled_segments[-1].copy()
+            last_segment.update({
+                'start_time': current_time,
+                'end_time': total_duration
+            })
+            filled_segments.append(last_segment)
         
         # Create video clips from images
         clips = []
-        for segment in image_segments:
+        for segment in filled_segments:
             try:
                 # Use PIL to resize the image first
                 with Image.open(segment['image_path']) as pil_image:
