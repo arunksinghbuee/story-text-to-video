@@ -7,7 +7,31 @@ from utility.captions.timed_captions_generator import generate_timed_captions
 from utility.video.video_search_query_generator import getVideoSearchQueriesTimed
 from utility.image.background_image_generator import generate_images_for_segments
 from utility.render.render_engine import get_output_media
-from utility.language.language_detector import detect_language_and_voice, list_available_voices
+from utility.language.language_detector import detect_language_and_voice, list_available_voices, check_voice_availability
+
+def review_search_terms(search_terms):
+    """Interactive review and update of search terms"""
+    print("\nReview and update search terms. Enter 'done' when finished.")
+    updated_terms = []
+    
+    for i, segment in enumerate(search_terms):
+        time_range, prompts = segment
+        start_time, end_time = time_range
+        
+        print(f"\nSegment {i+1} ({start_time}-{end_time}):")
+        print(f"Current prompts: {prompts}")
+        
+        user_input = input("Enter new prompts (comma-separated) or press Enter to keep current: ")
+        
+        if user_input.strip().lower() == 'done':
+            break
+        elif user_input.strip():
+            new_prompts = [p.strip() for p in user_input.split(',')]
+            updated_terms.append([[start_time, end_time], new_prompts])
+        else:
+            updated_terms.append(segment)
+    
+    return updated_terms
 
 async def main():
     # Read input script
@@ -17,14 +41,23 @@ async def main():
     SAMPLE_FILE_NAME = "audio_tts.wav"
     print("script: {}".format(script))
 
+    # Check Hindi voice availability
+    hindi_voice = "hi-IN-SweetyNeural"
+    is_available = await check_voice_availability(hindi_voice)
+    if is_available:
+        print(f"Using {hindi_voice} for Hindi text")
+    
     # Detect language and get appropriate voice
-    lang, voice = detect_language_and_voice(script)
+    lang, voice = await detect_language_and_voice(script)
     print(f"Detected language: {lang}")
     print(f"Selected voice: {voice}")
 
     # List available voices (for reference)
     available_voices = await list_available_voices()
-    print("Available voices:", available_voices)
+    print("\nAvailable female voices for this language:")
+    for voice_info in available_voices:
+        if voice_info['Locale'].startswith(lang):
+            print(f"- {voice_info['ShortName']}: {voice_info['FriendlyName']}")
 
     try:
         await generate_audio(script, SAMPLE_FILE_NAME, voice)
@@ -62,27 +95,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-def review_search_terms(search_terms):
-    """Interactive review and update of search terms"""
-    print("\nReview and update search terms. Enter 'done' when finished.")
-    updated_terms = []
-    
-    for i, segment in enumerate(search_terms):
-        time_range, prompts = segment
-        start_time, end_time = time_range
-        
-        print(f"\nSegment {i+1} ({start_time}-{end_time}):")
-        print(f"Current prompts: {prompts}")
-        
-        user_input = input("Enter new prompts (comma-separated) or press Enter to keep current: ")
-        
-        if user_input.strip().lower() == 'done':
-            break
-        elif user_input.strip():
-            new_prompts = [p.strip() for p in user_input.split(',')]
-            updated_terms.append([[start_time, end_time], new_prompts])
-        else:
-            updated_terms.append(segment)
-    
-    return updated_terms
