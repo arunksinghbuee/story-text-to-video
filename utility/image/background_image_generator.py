@@ -25,7 +25,7 @@ def download_pollinations_image(prompt, output_path):
     }
     
     try:
-        response = requests.post(api_url, headers=headers, json=payload, timeout=30)
+        response = requests.post(api_url, headers=headers, json=payload, timeout=300)
         response.raise_for_status()  # Raise exception for bad status codes
         
         # Extract base64 image data from response
