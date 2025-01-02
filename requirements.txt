@@ -49,4 +49,4 @@ whisper-timestamped==1.15.4
 yarl==1.9.4
 groq==0.11.0
 langdetect==1.0.9
-elevenlabs==0.3.0
+elevenlabs
