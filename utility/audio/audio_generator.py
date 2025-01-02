@@ -3,6 +3,7 @@ from elevenlabs import ElevenLabs
 import asyncio
 import aiofiles
 import io
+from pydub import AudioSegment
 
 # Voice IDs mapping for different languages
 VOICE_MAPPING = {
@@ -16,21 +17,22 @@ async def generate_audio(text, output_filename, voice="en-AU-WilliamNeural"):
         # Initialize ElevenLabs client
         client = ElevenLabs(api_key=os.environ.get('ELEVENLABS_API_KEY'))
         
-        # Get language code from voice string (e.g., 'en-AU-WilliamNeural' -> 'en')
+        # Get language code from voice string
         lang_code = voice.split('-')[0].lower()
         
         # Get appropriate voice ID
         voice_id = VOICE_MAPPING.get(lang_code, VOICE_MAPPING['en'])
         
-        # Convert text to speech
+        # Convert text to speech with a supported format
         audio_stream = client.text_to_speech.convert(
             voice_id=voice_id,
-            output_format="wav",  # Changed to WAV format
+            output_format="mp3_44100_128",  # Using supported format
             text=text,
             model_id="eleven_multilingual_v2",
         )
         
-        # Convert generator to bytes
+        # Save MP3 temporarily
+        temp_mp3 = "temp_audio.mp3"
         audio_bytes = b''
         for chunk in audio_stream:
             if isinstance(chunk, (bytes, bytearray)):
@@ -38,15 +40,21 @@ async def generate_audio(text, output_filename, voice="en-AU-WilliamNeural"):
             else:
                 audio_bytes += bytes(chunk)
         
-        # Save audio to file
-        async with aiofiles.open(output_filename, 'wb') as f:
-            await f.write(audio_bytes)
+        with open(temp_mp3, 'wb') as f:
+            f.write(audio_bytes)
+        
+        # Convert to WAV with correct parameters
+        audio = AudioSegment.from_mp3(temp_mp3)
+        audio = audio.set_frame_rate(16000).set_channels(1)
+        audio.export(output_filename, format="wav")
+        
+        # Clean up temp file
+        os.remove(temp_mp3)
         
         return True
         
     except Exception as e:
         print(f"Error generating audio: {str(e)}")
-        # Print more detailed error information
         import traceback
         print(f"Detailed error: {traceback.format_exc()}")
         return False
