@@ -50,3 +50,4 @@ yarl==1.9.4
 groq==0.11.0
 langdetect==1.0.9
 elevenlabs
+aiofiles==23.2.1
