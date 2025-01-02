@@ -59,6 +59,7 @@ def generate_images_for_segments(search_terms):
         success = False
         
         for prompt in prompts:
+            print("\nGenerating image for prompt:", prompt)
             if download_pollinations_image(prompt, image_path):
                 image_segments.append({
                     'start_time': start_time,
